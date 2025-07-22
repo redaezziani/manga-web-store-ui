@@ -67,3 +67,58 @@ export interface VolumeManga {
   isAvailable: boolean;
   categories: Category[];
 }
+
+export interface Cart {
+  id: string;
+  userId: string;
+  items: CartItem[];
+  summary: CartSummary;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CartItem {
+  id: string;
+  quantity: number;
+  subtotal: number;
+  volume: CartVolume;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CartVolume {
+  id: string;
+  volumeNumber: number;
+  price: number;
+  discount: number;
+  stock: number;
+  isAvailable: boolean;
+  finalPrice: number;
+  manga: CartManga;
+}
+
+export interface CartManga {
+  id: string;
+  title: string;
+  author: string;
+  coverImage: string;
+}
+
+export interface CartSummary {
+  totalItems: number;
+  uniqueItems: number;
+  subtotal: number;
+  totalDiscount: number;
+  total: number;
+}
+
+export interface AddToCartRequest {
+  volumeId: string;
+  quantity: number;
+}
+
+export interface CartResponse {
+  success: boolean;
+  message: string;
+  data: Cart;
+}

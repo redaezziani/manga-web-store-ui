@@ -1,5 +1,6 @@
 import Logo from "@/components/navbar-components/logo"
 import NotificationMenu from "@/components/navbar-components/notification-menu"
+import CartMenu from "@/components/navbar-components/cart-menu"
 import UserMenu from "@/components/navbar-components/user-menu"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,7 +14,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { ShoppingBasket } from "lucide-react"
 import { headers } from "next/headers"
 import Banner from "./banner"
 
@@ -108,8 +108,8 @@ export default function Navbar() {
           {/* Right side */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              {/* Info menu */}
-              <ShoppingBasket stroke="currentColor" size={20} className="hidden text-muted-foreground stroke-1 md:block" />
+              {/* Cart menu */}
+              <CartMenu />
               {/* Notification */}
               <NotificationMenu />
             </div>

@@ -5,7 +5,8 @@ import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { Badge } from "@/components/ui/badge";
 import { useVolume } from '@/stores/use-volume';
-import { useEffect } from 'react';
+import { useCart } from '@/stores/use-cart';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 // import MangaDetailsSkeleton from './MangaSkeleton';
 
@@ -15,6 +16,17 @@ interface MangaDetailsProps {
 
 export default function MangaDetails({ volumeId }: MangaDetailsProps) {
     const { volume, isLoading, error } = useVolume(volumeId);
+    const { addToCart, isLoading: cartLoading } = useCart();
+    const [quantity, setQuantity] = useState(1);
+
+    const handleAddToCart = async () => {
+        if (volume) {
+            await addToCart({
+                volumeId: volume.id,
+                quantity: quantity
+            });
+        }
+    };
 
     if (isLoading) {
         return (
@@ -35,7 +47,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
 
     return (
         <div className="space-y-10">
-            <div className="mt-4 flex w-full flex-col items-start justify-start gap-10 overflow-x-hidden md:flex-row">
+            <div className="mt-4 flex w-full flex-col items-start justify-start gap-4 md:gap-10 overflow-x-hidden md:flex-row">
                 {/* Volume Cover */}
                 <div className="relative aspect-[2/3] w-full max-w-60 overflow-hidden rounded-lg border border-gray-400/45">
                     <Image
@@ -103,18 +115,51 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                             </div>
                         </section>
 
-                        {/* Add to Cart Button */}
-                        <div className="flex gap-4 pt-4">
-                            <Button
-                                disabled={!volume.isAvailable || volume.stock === 0}
-                                className={`transition-colors ${
-                                    volume.isAvailable && volume.stock > 0
-                                        ? ' text-white'
-                                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                }`}
-                            >
-                                {volume.isAvailable && volume.stock > 0 ? 'إضافة إلى السلة' : 'غير متوفر'}
-                            </Button>
+                        {/* Add to Cart Section */}
+                        <div className="space-y-4 pt-4">
+                            {/* Quantity Selector */}
+                            <div className="flex items-center gap-4">
+                                <label className="text-sm font-medium">الكمية:</label>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                        className="h-8 w-8 rounded-md border border-border flex items-center justify-center hover:bg-accent"
+                                        disabled={quantity <= 1}
+                                    >
+                                        -
+                                    </button>
+                                    <span className="text-sm font-medium min-w-[30px] text-center">
+                                        {quantity}
+                                    </span>
+                                    <button
+                                        onClick={() => setQuantity(Math.min(volume.stock, quantity + 1))}
+                                        className="h-8 w-8 rounded-md border border-border flex items-center justify-center hover:bg-accent"
+                                        disabled={quantity >= volume.stock}
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Add to Cart Button */}
+                            <div className="flex gap-4">
+                                <Button
+                                    onClick={handleAddToCart}
+                                    disabled={!volume.isAvailable || volume.stock === 0 || cartLoading}
+                                    className="flex-1 md:flex-none"
+                                >
+                                    {cartLoading ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                                            جاري الإضافة...
+                                        </>
+                                    ) : volume.isAvailable && volume.stock > 0 ? (
+                                        `إضافة إلى السلة (${(volume.finalPrice * quantity).toFixed(2)} ريال)`
+                                    ) : (
+                                        'غير متوفر'
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
