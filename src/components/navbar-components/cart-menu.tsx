@@ -145,11 +145,11 @@ export default function CartMenu() {
                       <div className="flex items-center justify-between">
                         <div className="text-sm">
                           <span className="font-medium">
-                            {item.volume.finalPrice} ريال
+                            {item.volume.finalPrice} درهم
                           </span>
                           {item.volume.discount > 0 && (
                             <span className="text-xs text-muted-foreground line-through ml-1">
-                              {item.volume.price} ريال
+                              {item.volume.price} درهم
                             </span>
                           )}
                         </div>
@@ -178,7 +178,7 @@ export default function CartMenu() {
                       
                       {/* Subtotal */}
                       <div className="text-right text-sm text-muted-foreground">
-                        المجموع: <span className="font-medium text-foreground">{item.subtotal} ريال</span>
+                        المجموع: <span className="font-medium text-foreground">{item.subtotal} درهم</span>
                       </div>
                     </div>
                   </div>
@@ -190,12 +190,12 @@ export default function CartMenu() {
                 <div className="px-3 py-3 bg-muted/30 rounded-md mx-2 mt-2 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>المجموع الفرعي:</span>
-                    <span>{cart.summary.subtotal} ريال</span>
+                    <span>{cart.summary.subtotal} درهم</span>
                   </div>
                   {cart.summary.totalDiscount > 0 && (
                     <div className="flex justify-between text-sm text-green-600">
                       <span>إجمالي الخصم:</span>
-                      <span>-{cart.summary.totalDiscount} ريال</span>
+                      <span>-{cart.summary.totalDiscount} درهم</span>
                     </div>
                   )}
                   <div
@@ -205,7 +205,7 @@ export default function CartMenu() {
                   />
                   <div className="flex justify-between text-sm font-semibold">
                     <span>المجموع الكلي:</span>
-                    <span>{cart.summary.total} ريال</span>
+                    <span>{cart.summary.total} درهم</span>
                   </div>
                   
                   {/* Checkout Button */}

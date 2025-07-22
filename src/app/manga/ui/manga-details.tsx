@@ -6,6 +6,7 @@ import { ar } from 'date-fns/locale';
 import { Badge } from "@/components/ui/badge";
 import { useVolume } from '@/stores/use-volume';
 import { useCart } from '@/stores/use-cart';
+import { formatCurrencyAr } from '@/lib/currency';
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 // import MangaDetailsSkeleton from './MangaSkeleton';
@@ -91,7 +92,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                     رقم المجلد: {volume.volumeNumber}
                                 </p>
                                 <p className="text-muted-foreground text-sm">
-                                    السعر: {volume.price} ريال
+                                    السعر: {volume.price} درهم
                                 </p>
                                 {volume.discount > 0 && (
                                     <p className="text-muted-foreground text-sm">
@@ -99,7 +100,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                     </p>
                                 )}
                                 <p className="text-muted-foreground text-sm font-semibold">
-                                    السعر النهائي: {volume.finalPrice} ريال
+                                    السعر النهائي: {volume.finalPrice} درهم
                                 </p>
                                <div className="grid w-full grid-cols-3 md:grid-cols-1 gap-2">
                                  <p className="text-muted-foreground text-sm">
@@ -154,7 +155,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                             جاري الإضافة...
                                         </>
                                     ) : volume.isAvailable && volume.stock > 0 ? (
-                                        `إضافة إلى السلة (${(volume.finalPrice * quantity).toFixed(2)} ريال)`
+                                        `إضافة إلى السلة (${(volume.finalPrice * quantity).toFixed(2)} درهم)`
                                     ) : (
                                         'غير متوفر'
                                     )}
