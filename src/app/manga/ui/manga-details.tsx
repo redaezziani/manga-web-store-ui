@@ -58,6 +58,11 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                             <p className="text-muted-foreground text-sm">بواسطة: {manga.author}</p>
                         </div>
 
+                        {/* Manga Description */}
+                        <p className="text-muted-foreground max-w-3xl text-sm">
+                            {manga.description || 'لا توجد وصف متاح لهذا المجلد.'}
+                        </p>
+
                         {/* Categories */}
                         <div className="flex flex-wrap gap-2 max-w-lg">
                             {manga.categories.map((category: any) => (
@@ -68,8 +73,8 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                         </div>
 
                         {/* Volume Information */}
-                        <section className="w-full grid grid-cols-2 md:grid-cols-1 gap-4 items-start justify-start content-start">
-                            <div className="space-y-2">
+                        <section className="w-full ">
+                            <div className="space-y-2 w-full">
                                 <p className="text-muted-foreground text-sm">
                                     رقم المجلد: {volume.volumeNumber}
                                 </p>
@@ -84,7 +89,8 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                 <p className="text-muted-foreground text-sm font-semibold">
                                     السعر النهائي: {volume.finalPrice} ريال
                                 </p>
-                                <p className="text-muted-foreground text-sm">
+                               <div className="grid w-full grid-cols-3 md:grid-cols-1 gap-2">
+                                 <p className="text-muted-foreground text-sm">
                                     المخزون: {volume.stock} قطعة
                                 </p>
                                 <p className="text-muted-foreground text-sm">
@@ -93,6 +99,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                 <p className="text-muted-foreground text-sm">
                                     تاريخ الإضافة: {format(new Date(volume.createdAt), 'PP', { locale: ar })}
                                 </p>
+                               </div>
                             </div>
                         </section>
 

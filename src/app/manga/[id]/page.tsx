@@ -8,7 +8,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     return (
         <main
         aria-label="Manga Details Page"
-        lang="ar" className="container mx-auto mt-5 px-4 py-8">
+        lang="ar" className="container mx-auto mt-2 px-4">
             <section
             aria-label='Manga Details Section'
             className="my-6 flex flex-col items-start justify-start">

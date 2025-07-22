@@ -26,11 +26,11 @@ const navigationLinks = [
 
 export default function Navbar() {
   return (
-    <header className="sticky border-b  flex-col border-neutral-400/45  bg-white  top-0 w-full    flex justify-center items-center">
+    <header className="sticky border-b z-[99]  flex-col border-neutral-400/45  bg-white  top-0 w-full    flex justify-center items-center">
       <Banner
       text="متجر إلكتروني متخصص في بيع المانغا المترجمة إلى العربية"
       />
-      <nav className=" container  ">
+      <nav className=" px-2 container  ">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Left side */}
           <div className="flex items-center gap-2">
