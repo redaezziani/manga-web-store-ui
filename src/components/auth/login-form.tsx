@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/stores/use-auth"
+import { Input } from "../ui/input"
 
 interface LoginFormProps {
   onSuccess?: () => void
@@ -37,8 +38,8 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormPr
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="space-y-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">تسجيل الدخول</h2>
+        <div className="text-start">
+          <h2 className=" font-bold">تسجيل الدخول</h2>
           <p className="text-muted-foreground text-sm mt-2">
             ادخل إلى حسابك للمتابعة
           </p>
@@ -61,13 +62,13 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormPr
             <label htmlFor="email" className="block text-sm font-medium mb-2">
               البريد الإلكتروني
             </label>
-            <input
+            <Input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full "
               required
               disabled={isLoading}
             />
@@ -77,13 +78,13 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormPr
             <label htmlFor="password" className="block text-sm font-medium mb-2">
               كلمة المرور
             </label>
-            <input
+            <Input
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full "
               required
               disabled={isLoading}
             />
@@ -108,13 +109,13 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormPr
         {onSwitchToRegister && (
           <div className="text-center text-sm">
             <span className="text-muted-foreground">ليس لديك حساب؟ </span>
-            <button
+            <Button
+              variant="link"
               onClick={onSwitchToRegister}
-              className="text-primary hover:underline"
               disabled={isLoading}
             >
               إنشاء حساب جديد
-            </button>
+            </Button>
           </div>
         )}
       </div>

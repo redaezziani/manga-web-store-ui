@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, AuthResponse, LoginRequest, RegisterRequest } from '@/types/manga';
+import { userStorage, createZustandStorage, STORAGE_CONFIG } from '@/config/storage';
 
 interface UserStore {
   user: User | null;
@@ -193,7 +194,8 @@ export const useUserStore = create<UserStore>()(
       },
     }),
     {
-      name: 'user-storage',
+      name: STORAGE_CONFIG.keys.user,
+      storage: createZustandStorage(userStorage),
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,

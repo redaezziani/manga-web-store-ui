@@ -14,7 +14,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { headers } from "next/headers"
 import Banner from "./banner"
 
 
