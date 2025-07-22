@@ -109,7 +109,7 @@ export default function MangaVolumesList({ mangaId, currentVolumeId }: MangaVolu
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="">
         <h2 className="text-2xl font-bold">مجلدات أخرى من نفس السلسلة</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {Array.from({ length: 6 }).map((_, index) => (
@@ -153,7 +153,7 @@ export default function MangaVolumesList({ mangaId, currentVolumeId }: MangaVolu
   const sortedVolumes = [...volumes].sort((a, b) => a.volumeNumber - b.volumeNumber);
 
   return (
-    <div className="space-y-6">
+    <div className="">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">مجلدات أخرى من نفس السلسلة</h2>
         <span className="text-sm text-muted-foreground">
@@ -161,7 +161,7 @@ export default function MangaVolumesList({ mangaId, currentVolumeId }: MangaVolu
         </span>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {sortedVolumes.map((volume) => (
           <VolumeCard
             key={volume.id}
