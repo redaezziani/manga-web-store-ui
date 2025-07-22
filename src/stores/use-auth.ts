@@ -18,10 +18,13 @@ export const useAuth = () => {
     updateProfile,
   } = useUserStore();
 
-  // Check auth status on mount
+  // Check auth status on mount - only once without automatic refresh
   useEffect(() => {
-    checkAuthStatus();
-  }, [checkAuthStatus]);
+    // Only check if we have stored data but haven't verified authentication yet
+    if ((accessToken || user) && isAuthenticated === false) {
+      checkAuthStatus();
+    }
+  }, []); // Empty dependency array to run only once on mount
 
   // Helper functions
   const getDisplayName = () => user?.displayName || user?.firstName || 'User';

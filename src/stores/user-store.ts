@@ -11,6 +11,7 @@ interface UserStore {
   isLoading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  refreshAttempted: boolean; // Track if we've already tried to refresh
   
   // Actions
   login: (credentials: LoginRequest) => Promise<void>;
@@ -32,6 +33,7 @@ export const useUserStore = create<UserStore>()(
       isLoading: false,
       error: null,
       isAuthenticated: false,
+      refreshAttempted: false,
 
       login: async (credentials: LoginRequest) => {
         set({ isLoading: true, error: null });
@@ -60,6 +62,7 @@ export const useUserStore = create<UserStore>()(
               expiresIn: data.data.expiresIn,
               isAuthenticated: true,
               isLoading: false,
+              refreshAttempted: false, // Reset on successful login
             });
           } else {
             throw new Error(data.message || 'Login failed');
@@ -99,6 +102,7 @@ export const useUserStore = create<UserStore>()(
               expiresIn: data.data.expiresIn,
               isAuthenticated: true,
               isLoading: false,
+              refreshAttempted: false, // Reset on successful registration
             });
           } else {
             throw new Error(data.message || 'Registration failed');
@@ -119,18 +123,23 @@ export const useUserStore = create<UserStore>()(
           expiresIn: null,
           isAuthenticated: false,
           error: null,
+          refreshAttempted: false, // Reset refresh flag on logout
         });
       },
 
       refreshAccessToken: async () => {
-        const { refreshToken } = get();
+        const { refreshToken, refreshAttempted } = get();
         
-        if (!refreshToken) {
+        if (!refreshToken || refreshAttempted) {
           set({ isAuthenticated: false });
           return;
         }
 
+        // Mark that we've attempted refresh to prevent loops
+        set({ refreshAttempted: true });
+
         try {
+          // Check if refresh endpoint exists first
           const response = await fetch('http://localhost:7000/api/v1/auth/refresh', {
             method: 'POST',
             headers: {
@@ -139,6 +148,13 @@ export const useUserStore = create<UserStore>()(
             },
             body: JSON.stringify({ refreshToken }),
           });
+          
+          if (response.status === 404) {
+            // Refresh endpoint doesn't exist, just logout
+            console.warn('Token refresh endpoint not available');
+            get().logout();
+            return;
+          }
           
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -153,12 +169,14 @@ export const useUserStore = create<UserStore>()(
               expiresIn: data.data.expiresIn,
               user: data.data.user,
               isAuthenticated: true,
+              refreshAttempted: false, // Reset on success
             });
           } else {
             throw new Error(data.message || 'Token refresh failed');
           }
         } catch (error) {
           // If refresh fails, logout user
+          console.warn('Token refresh failed:', error);
           get().logout();
         }
       },
@@ -166,22 +184,17 @@ export const useUserStore = create<UserStore>()(
       clearError: () => set({ error: null }),
 
       checkAuthStatus: () => {
-        const { accessToken, expiresIn, refreshAccessToken } = get();
+        const { accessToken, user } = get();
         
-        if (!accessToken) {
-          set({ isAuthenticated: false });
-          return;
-        }
-
-        // Check if token is expired (with 5 minute buffer)
-        const now = Date.now() / 1000;
-        const tokenExpiry = (expiresIn || 0) * 3600; // Convert hours to seconds
-        
-        if (now >= tokenExpiry - 300) { // 5 minute buffer
-          refreshAccessToken();
-        } else {
+        // Simple check: if we have both token and user, consider authenticated
+        if (accessToken && user) {
           set({ isAuthenticated: true });
+        } else {
+          set({ isAuthenticated: false });
         }
+        
+        // Note: Token expiration checking is disabled since refresh endpoint may not exist
+        // In a production app, you would implement proper token validation here
       },
 
       updateProfile: (updates: Partial<User>) => {

@@ -9,6 +9,7 @@ import { useCart } from '@/stores/use-cart';
 import { formatCurrencyAr } from '@/lib/currency';
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import MangaVolumesList from '@/components/manga/manga-volumes-list';
 // import MangaDetailsSkeleton from './MangaSkeleton';
 
 interface MangaDetailsProps {
@@ -147,7 +148,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                 <Button
                                     onClick={handleAddToCart}
                                     disabled={!volume.isAvailable || volume.stock === 0 || cartLoading}
-                                    className="flex-1 md:flex-none"
+                                    className="flex-1 max-w-1/2 md:flex-none"
                                 >
                                     {cartLoading ? (
                                         <>
@@ -162,6 +163,10 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                 </Button>
                             </div>
                         </div>
+                         <MangaVolumesList 
+                mangaId={manga.id} 
+                currentVolumeId={volume.id}
+            />
                     </div>
                 </div>
             </div>
@@ -186,6 +191,9 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                     </div>
                 </div>
             )}
+
+           
+           
         </div>
     );
 }

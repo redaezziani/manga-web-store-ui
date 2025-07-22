@@ -165,3 +165,35 @@ export interface RegisterRequest {
   lastName: string;
   displayName: string;
 }
+
+// Volume listing types
+export interface VolumeListResponse {
+  success: boolean;
+  message: string;
+  data: VolumeListData;
+}
+
+export interface VolumeListData {
+  data: VolumeListItem[];
+  meta: Meta;
+}
+
+export interface VolumeListItem {
+  id: string;
+  volumeNumber: number;
+  price: number;
+  discount: number;
+  finalPrice: number;
+  stock: number;
+  coverImage: any;
+  isAvailable: boolean;
+  manga: VolumeListManga;
+}
+
+export interface VolumeListManga {
+  id: string;
+  title: string;
+  author: string;
+  coverImage: string;
+  isAvailable: boolean;
+}
