@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useCartStore } from './cart-store';
+import { useAuth } from './use-auth';
 
 export const useCart = () => {
   const {
@@ -14,10 +15,14 @@ export const useCart = () => {
     clearError
   } = useCartStore();
 
-  // Fetch cart on mount
+  const { isAuthenticated } = useAuth();
+
+  // Fetch cart when user is authenticated
   useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+    if (isAuthenticated) {
+      fetchCart();
+    }
+  }, [fetchCart, isAuthenticated]);
 
   // Helper functions
   const getTotalItems = () => cart?.summary?.totalItems || 0;

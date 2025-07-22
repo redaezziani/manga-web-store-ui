@@ -1,5 +1,16 @@
 import { create } from 'zustand';
 import { Cart, CartResponse, AddToCartRequest } from '@/types/manga';
+import { useUserStore } from './user-store';
+
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+  const { accessToken } = useUserStore.getState();
+  return {
+    'accept': 'application/json',
+    'Content-Type': 'application/json',
+    ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
+  };
+};
 
 interface CartStore {
   cart: Cart | null;
@@ -30,9 +41,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     
     try {
       const response = await fetch('http://localhost:7000/api/v1/cart', {
-        headers: {
-          'accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
@@ -60,10 +69,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     try {
       const response = await fetch('http://localhost:7000/api/v1/cart/add', {
         method: 'POST',
-        headers: {
-          'accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(request),
       });
       
@@ -92,9 +98,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     try {
       const response = await fetch(`http://localhost:7000/api/v1/cart/remove/${volumeId}`, {
         method: 'DELETE',
-        headers: {
-          'accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
@@ -122,10 +126,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     try {
       const response = await fetch('http://localhost:7000/api/v1/cart/update', {
         method: 'PUT',
-        headers: {
-          'accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ volumeId, quantity }),
       });
       
@@ -154,9 +155,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     try {
       const response = await fetch('http://localhost:7000/api/v1/cart/clear', {
         method: 'DELETE',
-        headers: {
-          'accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
