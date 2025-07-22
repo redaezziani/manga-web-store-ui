@@ -10,3 +10,4 @@ const MainPageLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 };
 
 export default MainPageLayout;
+
