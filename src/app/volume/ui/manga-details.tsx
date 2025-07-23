@@ -94,7 +94,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
         return <div className="text-center text-lg py-8">لا توجد معلومات متاحة لهذا المجلد.</div>;
     }
 
-    
+
 
     return (
         <div className="space-y-10">
@@ -174,7 +174,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                        className="h-8 w-8 rounded-md border border-border flex items-center justify-center hover:bg-accent"
+                                        className="h-8 w-8 rounded-md bg-white border border-border flex items-center justify-center hover:bg-accent"
                                         disabled={quantity <= 1}
                                     >
                                         -
@@ -184,7 +184,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                     </span>
                                     <button
                                         onClick={() => setQuantity(Math.min(volume.stock, quantity + 1))}
-                                        className="h-8 w-8 rounded-md border border-border flex items-center justify-center hover:bg-accent"
+                                        className="h-8 w-8 rounded-md bg-white border border-border flex items-center justify-center hover:bg-accent"
                                         disabled={quantity >= volume.stock}
                                     >
                                         +
@@ -221,13 +221,13 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                             mangas={relatedVolumes}
                             isLoading={isLoading}
                             skeletonCount={5}
-                            breakpoints={ {
-    320: { slidesPerView: 2, spaceBetween: 10 },
-    480: { slidesPerView: 2, spaceBetween: 15 },
-    768: { slidesPerView: 2, spaceBetween: 15 },
-    1024: { slidesPerView: 3, spaceBetween: 15 },
-    1280: { slidesPerView: 6, spaceBetween: 15 },
-  }}
+                            breakpoints={{
+                                320: { slidesPerView: 2, spaceBetween: 10 },
+                                480: { slidesPerView: 2, spaceBetween: 15 },
+                                768: { slidesPerView: 2, spaceBetween: 15 },
+                                1024: { slidesPerView: 3, spaceBetween: 15 },
+                                1280: { slidesPerView: 6, spaceBetween: 15 },
+                            }}
                         />
                     </div>
                 </div>
