@@ -180,7 +180,7 @@ body.ltr, [dir="ltr"] {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply  text-foreground bg-slate-50/50;
+    @apply  text-foreground bg-slate-50/50 grayscale-100;
     font-family: var(--font-Samsung);
     direction: rtl;
     text-align: right;

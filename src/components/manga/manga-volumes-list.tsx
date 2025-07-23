@@ -84,15 +84,15 @@ function VolumeCard({ volume, isCurrentVolume }: VolumeCardProps) {
             <div className="flex items-center gap-2">
               {volume.discount > 0 ? (
                 <>
-                  <span className="text-sm font-bold text-primary">
+                  <span className="text-xs  text-gray-900">
                     {formatCurrencyAr(volume.finalPrice)}
                   </span>
-                  <span className="text-xs text-gray-500 line-through">
+                  <span className="text-xs  text-gray-900">
                     {formatCurrencyAr(volume.price)}
                   </span>
                 </>
               ) : (
-                <span className="text-sm font-bold">
+                <span className="text-xs text-gray-500 line-through">
                   {formatCurrencyAr(volume.price)}
                 </span>
               )}
@@ -155,7 +155,7 @@ export default function MangaVolumesList({ mangaId, currentVolumeId }: MangaVolu
   return (
     <div className="">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">مجلدات أخرى من نفس السلسلة</h2>
+        <h2 className="text-xl font-bold ">مجلدات أخرى من نفس السلسلة</h2>
         <span className="text-sm text-muted-foreground">
           {volumes.length} مجلد متاح
         </span>
