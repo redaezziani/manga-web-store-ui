@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import MangaVolumesList from '@/components/manga/manga-volumes-list';
 import VolumeList from "@/app/ui/volumes-list";
+import WishlistButton from '@/components/wishlist/wishlist-button';
 // import MangaDetailsSkeleton from './MangaSkeleton';
 
 interface MangaDetailsProps {
@@ -192,7 +193,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                 </div>
                             </div>
 
-                            {/* Add to Cart Button */}
+                            {/* Add to Cart Button and Wishlist */}
                             <div className="flex gap-4">
                                 <Button
                                     onClick={handleAddToCart}
@@ -210,6 +211,12 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                         'غير متوفر'
                                     )}
                                 </Button>
+                                <WishlistButton 
+                                    mangaId={manga.id} 
+                                    variant="outline" 
+                                    size="default"
+                                    showText={true}
+                                />
                             </div>
                         </div>
                         <MangaVolumesList

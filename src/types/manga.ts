@@ -197,3 +197,63 @@ export interface VolumeListManga {
   coverImage: string;
   isAvailable: boolean;
 }
+
+// Wishlist types
+export interface WishlistResponse {
+  success: boolean;
+  message: string;
+  data: WishlistData;
+}
+
+export interface WishlistData {
+  items: WishlistItem[];
+  totalCount: number;
+}
+
+export interface WishlistItem {
+  id: string;
+  createdAt: string;
+  manga: WishlistManga;
+}
+
+export interface WishlistManga {
+  id: string;
+  title: string;
+  author: string;
+  description: string;
+  coverImage: string;
+  isAvailable: boolean;
+  volumeCount: number;
+  minPrice: number;
+  categories: WishlistCategory[];
+}
+
+export interface WishlistCategory {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface WishlistCountResponse {
+  success: boolean;
+  message: string;
+  data: {
+    count: number;
+  };
+}
+
+export interface WishlistCheckResponse {
+  success: boolean;
+  message: string;
+  data: {
+    inWishlist: boolean;
+  };
+}
+
+export interface AddToWishlistRequest {
+  mangaId: string;
+}
+
+export interface RemoveFromWishlistRequest {
+  mangaId: string;
+}

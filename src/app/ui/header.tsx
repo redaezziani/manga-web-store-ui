@@ -1,6 +1,7 @@
 import Logo from "@/components/navbar-components/logo"
 import NotificationMenu from "@/components/navbar-components/notification-menu"
 import CartMenu from "@/components/navbar-components/cart-menu"
+import WishlistMenu from "@/components/navbar-components/wishlist-menu"
 import UserMenu from "@/components/navbar-components/user-menu"
 import { Button } from "@/components/ui/button"
 import {
@@ -107,6 +108,8 @@ export default function Navbar() {
           {/* Right side */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
+              {/* Wishlist menu */}
+              <WishlistMenu />
               {/* Cart menu */}
               <CartMenu />
               {/* Notification */}
