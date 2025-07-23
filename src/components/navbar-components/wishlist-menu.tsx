@@ -69,11 +69,20 @@ export default function WishlistMenu() {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
-          <Heart className="h-5 w-5" />
+             {/* <ShoppingBasket size={16} aria-hidden="true" />
+          {totalItems > 0 && (
+            <div
+              aria-hidden="true"
+              className="bg-primary absolute -top-1 -right-1 size-5 rounded-full flex items-center justify-center text-xs text-white font-medium"
+            >
+              {totalItems > 99 ? '99+' : totalItems}
+            </div>
+          )} */}
+          <Heart size={16} aria-hidden="true" className=' stroke-1' />
           {totalCount > 0 && (
             <Badge 
               variant="destructive" 
-              className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+              className="absolute -top-1 -right-1 size-5 rounded-full p-0 flex items-center justify-center text-xs"
             >
               {totalCount > 99 ? '99+' : totalCount}
             </Badge>
@@ -132,7 +141,7 @@ export default function WishlistMenu() {
                     >
                       <div className="relative w-12 h-16 flex-shrink-0 rounded overflow-hidden">
                         <Image
-                          src={item.manga.coverImage}
+                          src={item.coverImage}
                           alt={item.manga.title}
                           layout="fill"
                           className="object-cover"

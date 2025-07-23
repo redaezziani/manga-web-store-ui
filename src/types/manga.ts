@@ -95,6 +95,7 @@ export interface CartVolume {
   isAvailable: boolean;
   finalPrice: number;
   manga: CartManga;
+  coverImage: string;
 }
 
 export interface CartManga {
@@ -214,6 +215,7 @@ export interface WishlistItem {
   id: string;
   createdAt: string;
   manga: WishlistManga;
+  
 }
 
 export interface WishlistManga {

@@ -114,7 +114,7 @@ export default function CartMenu() {
                     {/* Volume Cover */}
                     <div className="relative w-12 h-16 rounded-md overflow-hidden border flex-shrink-0">
                       <Image
-                        src={item.volume.manga.coverImage}
+                        src={item.volume.coverImage}
                         alt={item.volume.manga.title}
                         fill
                         className="object-cover"

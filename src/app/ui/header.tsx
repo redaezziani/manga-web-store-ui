@@ -1,5 +1,3 @@
-import Logo from "@/components/navbar-components/logo"
-import NotificationMenu from "@/components/navbar-components/notification-menu"
 import CartMenu from "@/components/navbar-components/cart-menu"
 import WishlistMenu from "@/components/navbar-components/wishlist-menu"
 import UserMenu from "@/components/navbar-components/user-menu"
@@ -112,8 +110,6 @@ export default function Navbar() {
               <WishlistMenu />
               {/* Cart menu */}
               <CartMenu />
-              {/* Notification */}
-              <NotificationMenu />
             </div>
             {/* User menu */}
             <UserMenu />
