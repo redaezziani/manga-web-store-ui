@@ -34,7 +34,7 @@ function VolumeCard({ volume, isCurrentVolume }: VolumeCardProps) {
 
   return (
     <div className={`group relative ${isCurrentVolume ? '' : ''}`}>
-      <Link href={`/manga/${volume.id}`} className="block">
+      <Link href={`/volume/${volume.id}`} className="block">
         <Card className="group bg-transparent dark:bg-transparent overflow-hidden border-none shadow-none">
           <div className="relative aspect-[10/14] w-full overflow-hidden rounded-lg">
             <Image

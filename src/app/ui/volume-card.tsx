@@ -2,6 +2,7 @@
 import React from 'react';
 import Image from "next/legacy/image";
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import WishlistButton from '@/components/wishlist/wishlist-button';
 import SkeletonCard from './skelton-card';
 import Link from 'next/link';
 

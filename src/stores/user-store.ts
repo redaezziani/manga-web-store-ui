@@ -8,19 +8,22 @@ interface UserStore {
   accessToken: string | null;
   refreshToken: string | null;
   expiresIn: number | null;
+  tokenExpiry: number | null; // Timestamp when token expires
   isLoading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-  refreshAttempted: boolean; // Track if we've already tried to refresh
+  isRefreshing: boolean; // Track if we're currently refreshing
   
   // Actions
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
-  refreshAccessToken: () => Promise<void>;
+  refreshAccessToken: () => Promise<boolean>;
   clearError: () => void;
   checkAuthStatus: () => void;
   updateProfile: (updates: Partial<User>) => void;
+  isTokenExpired: () => boolean;
+  getValidToken: () => Promise<string | null>;
 }
 
 export const useUserStore = create<UserStore>()(
@@ -30,10 +33,11 @@ export const useUserStore = create<UserStore>()(
       accessToken: null,
       refreshToken: null,
       expiresIn: null,
+      tokenExpiry: null,
       isLoading: false,
       error: null,
       isAuthenticated: false,
-      refreshAttempted: false,
+      isRefreshing: false,
 
       login: async (credentials: LoginRequest) => {
         set({ isLoading: true, error: null });
@@ -55,14 +59,16 @@ export const useUserStore = create<UserStore>()(
           const data: AuthResponse = await response.json();
           
           if (data.success) {
+            const tokenExpiry = Date.now() + (data.data.expiresIn * 1000);
+            
             set({
               user: data.data.user,
               accessToken: data.data.accessToken,
               refreshToken: data.data.refreshToken,
               expiresIn: data.data.expiresIn,
+              tokenExpiry,
               isAuthenticated: true,
               isLoading: false,
-              refreshAttempted: false, // Reset on successful login
             });
           } else {
             throw new Error(data.message || 'Login failed');
@@ -95,14 +101,16 @@ export const useUserStore = create<UserStore>()(
           const data: AuthResponse = await response.json();
           
           if (data.success) {
+            const tokenExpiry = Date.now() + (data.data.expiresIn * 1000);
+            
             set({
               user: data.data.user,
               accessToken: data.data.accessToken,
               refreshToken: data.data.refreshToken,
               expiresIn: data.data.expiresIn,
+              tokenExpiry,
               isAuthenticated: true,
               isLoading: false,
-              refreshAttempted: false, // Reset on successful registration
             });
           } else {
             throw new Error(data.message || 'Registration failed');
@@ -121,25 +129,24 @@ export const useUserStore = create<UserStore>()(
           accessToken: null,
           refreshToken: null,
           expiresIn: null,
+          tokenExpiry: null,
           isAuthenticated: false,
           error: null,
-          refreshAttempted: false, // Reset refresh flag on logout
+          isRefreshing: false,
         });
       },
 
-      refreshAccessToken: async () => {
-        const { refreshToken, refreshAttempted } = get();
+      refreshAccessToken: async (): Promise<boolean> => {
+        const { refreshToken, isRefreshing } = get();
         
-        if (!refreshToken || refreshAttempted) {
-          set({ isAuthenticated: false });
-          return;
+        if (!refreshToken || isRefreshing) {
+          return false;
         }
 
-        // Mark that we've attempted refresh to prevent loops
-        set({ refreshAttempted: true });
+        // Prevent multiple simultaneous refresh attempts
+        set({ isRefreshing: true });
 
         try {
-          // Check if refresh endpoint exists first
           const response = await fetch('http://localhost:7000/api/v1/auth/refresh', {
             method: 'POST',
             headers: {
@@ -149,13 +156,6 @@ export const useUserStore = create<UserStore>()(
             body: JSON.stringify({ refreshToken }),
           });
           
-          if (response.status === 404) {
-            // Refresh endpoint doesn't exist, just logout
-            console.warn('Token refresh endpoint not available');
-            get().logout();
-            return;
-          }
-          
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -163,38 +163,44 @@ export const useUserStore = create<UserStore>()(
           const data: AuthResponse = await response.json();
           
           if (data.success) {
+            const tokenExpiry = Date.now() + (data.data.expiresIn * 1000);
+            
             set({
               accessToken: data.data.accessToken,
               refreshToken: data.data.refreshToken,
               expiresIn: data.data.expiresIn,
+              tokenExpiry,
               user: data.data.user,
               isAuthenticated: true,
-              refreshAttempted: false, // Reset on success
+              isRefreshing: false,
             });
+            return true;
           } else {
             throw new Error(data.message || 'Token refresh failed');
           }
         } catch (error) {
-          // If refresh fails, logout user
           console.warn('Token refresh failed:', error);
           get().logout();
+          return false;
         }
       },
 
       clearError: () => set({ error: null }),
 
       checkAuthStatus: () => {
-        const { accessToken, user } = get();
+        const { accessToken, user, tokenExpiry } = get();
         
-        // Simple check: if we have both token and user, consider authenticated
         if (accessToken && user) {
-          set({ isAuthenticated: true });
+          // Check if token is expired
+          if (tokenExpiry && Date.now() >= tokenExpiry) {
+            // Token is expired, attempt refresh
+            get().refreshAccessToken();
+          } else {
+            set({ isAuthenticated: true });
+          }
         } else {
           set({ isAuthenticated: false });
         }
-        
-        // Note: Token expiration checking is disabled since refresh endpoint may not exist
-        // In a production app, you would implement proper token validation here
       },
 
       updateProfile: (updates: Partial<User>) => {
@@ -205,6 +211,29 @@ export const useUserStore = create<UserStore>()(
           });
         }
       },
+
+      isTokenExpired: (): boolean => {
+        const { tokenExpiry } = get();
+        if (!tokenExpiry) return true;
+        return Date.now() >= tokenExpiry;
+      },
+
+      getValidToken: async (): Promise<string | null> => {
+        const { accessToken, isTokenExpired, refreshAccessToken } = get();
+        
+        if (!accessToken) return null;
+        
+        // If token is expired, try to refresh
+        if (isTokenExpired()) {
+          const refreshed = await refreshAccessToken();
+          if (refreshed) {
+            return get().accessToken;
+          }
+          return null;
+        }
+        
+        return accessToken;
+      },
     }),
     {
       name: STORAGE_CONFIG.keys.user,
@@ -214,6 +243,7 @@ export const useUserStore = create<UserStore>()(
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         expiresIn: state.expiresIn,
+        tokenExpiry: state.tokenExpiry,
         isAuthenticated: state.isAuthenticated,
       }),
     }

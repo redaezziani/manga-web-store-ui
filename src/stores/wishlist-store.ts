@@ -7,17 +7,7 @@ import {
   AddToWishlistRequest,
   RemoveFromWishlistRequest
 } from '@/types/manga';
-import { useUserStore } from './user-store';
-
-// Helper function to get auth headers
-const getAuthHeaders = () => {
-  const { accessToken } = useUserStore.getState();
-  return {
-    'accept': 'application/json',
-    'Content-Type': 'application/json',
-    ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
-  };
-};
+import { httpClient, apiCall } from '@/lib/http-client';
 
 interface WishlistStore {
   items: WishlistItem[];
@@ -45,15 +35,10 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch('http://localhost:7000/api/v1/wishlist', {
-        headers: getAuthHeaders(),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: WishlistResponse = await response.json();
+      const data = await apiCall<WishlistResponse>(
+        () => httpClient.get('/wishlist'),
+        'Failed to fetch wishlist'
+      );
       
       if (data.success) {
         set({ 
@@ -76,20 +61,10 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch('http://localhost:7000/api/v1/wishlist', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(request),
-      });
-      
-      if (!response.ok) {
-        if (response.status === 409) {
-          throw new Error('هذا المانغا موجود بالفعل في قائمة الأمنيات');
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
+      const data = await apiCall<{ success: boolean; message: string; data: any }>(
+        () => httpClient.post('/wishlist', request),
+        'Failed to add to wishlist'
+      );
       
       if (data.success) {
         // Refetch wishlist to get updated data
@@ -110,17 +85,10 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch('http://localhost:7000/api/v1/wishlist', {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(request),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
+      const data = await apiCall<{ success: boolean; message: string; data: any }>(
+        () => httpClient.delete('/wishlist', request),
+        'Failed to remove from wishlist'
+      );
       
       if (data.success) {
         // Remove item from local state
@@ -147,16 +115,10 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch('http://localhost:7000/api/v1/wishlist/clear', {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
+      const data = await apiCall<{ success: boolean; message: string; data: any }>(
+        () => httpClient.delete('/wishlist/clear'),
+        'Failed to clear wishlist'
+      );
       
       if (data.success) {
         set({ 
@@ -178,15 +140,10 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
 
   getWishlistCount: async () => {
     try {
-      const response = await fetch('http://localhost:7000/api/v1/wishlist/count', {
-        headers: getAuthHeaders(),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: WishlistCountResponse = await response.json();
+      const data = await apiCall<WishlistCountResponse>(
+        () => httpClient.get('/wishlist/count'),
+        'Failed to get wishlist count'
+      );
       
       if (data.success) {
         set({ totalCount: data.data.count });
@@ -202,15 +159,10 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
 
   checkInWishlist: async (mangaId: string) => {
     try {
-      const response = await fetch(`http://localhost:7000/api/v1/wishlist/check/${mangaId}`, {
-        headers: getAuthHeaders(),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: WishlistCheckResponse = await response.json();
+      const data = await apiCall<WishlistCheckResponse>(
+        () => httpClient.get(`/wishlist/check/${mangaId}`),
+        'Failed to check wishlist status'
+      );
       
       if (data.success) {
         return data.data.inWishlist;

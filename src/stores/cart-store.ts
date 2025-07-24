@@ -1,16 +1,6 @@
 import { create } from 'zustand';
 import { Cart, CartResponse, AddToCartRequest } from '@/types/manga';
-import { useUserStore } from './user-store';
-
-// Helper function to get auth headers
-const getAuthHeaders = () => {
-  const { accessToken } = useUserStore.getState();
-  return {
-    'accept': 'application/json',
-    'Content-Type': 'application/json',
-    ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
-  };
-};
+import { httpClient, apiCall } from '@/lib/http-client';
 
 interface CartStore {
   cart: Cart | null;
@@ -40,15 +30,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch('http://localhost:7000/api/v1/cart', {
-        headers: getAuthHeaders(),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: CartResponse = await response.json();
+      const data = await apiCall<CartResponse>(
+        () => httpClient.get('/cart'),
+        'Failed to fetch cart'
+      );
       
       if (data.success) {
         set({ cart: data.data, isLoading: false });
@@ -67,17 +52,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch('http://localhost:7000/api/v1/cart/add', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(request),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: CartResponse = await response.json();
+      const data = await apiCall<CartResponse>(
+        () => httpClient.post('/cart/add', request),
+        'Failed to add item to cart'
+      );
       
       if (data.success) {
         set({ cart: data.data, isLoading: false });
@@ -96,16 +74,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch(`http://localhost:7000/api/v1/cart/remove/${volumeId}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: CartResponse = await response.json();
+      const data = await apiCall<CartResponse>(
+        () => httpClient.delete(`/cart/remove/${volumeId}`),
+        'Failed to remove item from cart'
+      );
       
       if (data.success) {
         set({ cart: data.data, isLoading: false });
@@ -124,17 +96,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch('http://localhost:7000/api/v1/cart/update', {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ volumeId, quantity }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: CartResponse = await response.json();
+      const data = await apiCall<CartResponse>(
+        () => httpClient.put('/cart/update', { volumeId, quantity }),
+        'Failed to update cart item'
+      );
       
       if (data.success) {
         set({ cart: data.data, isLoading: false });
@@ -153,16 +118,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch('http://localhost:7000/api/v1/cart/clear', {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: CartResponse = await response.json();
+      const data = await apiCall<CartResponse>(
+        () => httpClient.delete('/cart/clear'),
+        'Failed to clear cart'
+      );
       
       if (data.success) {
         set({ cart: data.data, isLoading: false });
