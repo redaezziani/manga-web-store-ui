@@ -1,3 +1,4 @@
+@import url(https://db.onlinewebfonts.com/c/955ee65b566061fd16955358d064ebe3?family=Handset+Sans+Kufi+Arabic);
 @import "tailwindcss";
 @import "tw-animate-css";
 @import 'swiper/css';
@@ -21,9 +22,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Base styles for RTL/LTR support */
+
 body{
-  font-family: 'Samsung', sans-serif;
+  font-family: 'Handset Sans Kufi Arabic', 'Samsung', 'AlRaiMediaBold', sans-serif;
 }
 
 /* RTL specific styles */
