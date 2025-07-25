@@ -62,7 +62,7 @@ export default function CartMenu() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-1" align="end">
+      <PopoverContent className=" min-w-80 md:w-96 p-1" align="end">
         <div className="flex items-baseline justify-between gap-4 px-3 py-2">
           <div className="text-sm font-semibold">سلة التسوق</div>
           {cart && cart.items.length > 0 && (
