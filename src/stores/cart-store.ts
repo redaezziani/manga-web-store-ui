@@ -1,5 +1,12 @@
 import { create } from 'zustand';
-import { Cart, CartResponse, AddToCartRequest } from '@/types/manga';
+import { 
+  Cart, 
+  CartResponse, 
+  AddToCartRequest, 
+  UpdateCartItemRequest,
+  CartCountResponse,
+  ClearCartResponse
+} from '@/types/manga';
 import { httpClient, apiCall } from '@/lib/http-client';
 
 interface CartStore {
@@ -11,9 +18,10 @@ interface CartStore {
   // Actions
   fetchCart: () => Promise<void>;
   addToCart: (request: AddToCartRequest) => Promise<void>;
-  removeFromCart: (volumeId: string) => Promise<void>;
-  updateQuantity: (volumeId: string, quantity: number) => Promise<void>;
+  removeFromCart: (cartItemId: string) => Promise<void>;
+  updateQuantity: (cartItemId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
+  getCartCount: () => Promise<number>;
   openCart: () => void;
   closeCart: () => void;
   toggleCart: () => void;
@@ -70,12 +78,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
   },
 
-  removeFromCart: async (volumeId: string) => {
+  removeFromCart: async (cartItemId: string) => {
     set({ isLoading: true, error: null });
     
     try {
       const data = await apiCall<CartResponse>(
-        () => httpClient.delete(`/cart/remove/${volumeId}`),
+        () => httpClient.delete(`/cart/remove/${cartItemId}`),
         'Failed to remove item from cart'
       );
       
@@ -92,12 +100,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
   },
 
-  updateQuantity: async (volumeId: string, quantity: number) => {
+  updateQuantity: async (cartItemId: string, quantity: number) => {
     set({ isLoading: true, error: null });
     
     try {
       const data = await apiCall<CartResponse>(
-        () => httpClient.put('/cart/update', { volumeId, quantity }),
+        () => httpClient.put('/cart/update', { cartItemId, quantity }),
         'Failed to update cart item'
       );
       
@@ -118,13 +126,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const data = await apiCall<CartResponse>(
+      const data = await apiCall<ClearCartResponse>(
         () => httpClient.delete('/cart/clear'),
         'Failed to clear cart'
       );
       
       if (data.success) {
-        set({ cart: data.data, isLoading: false });
+        // After clearing, set cart to null since it's empty
+        set({ cart: null, isLoading: false });
       } else {
         throw new Error(data.message || 'Failed to clear cart');
       }
@@ -133,6 +142,24 @@ export const useCartStore = create<CartStore>((set, get) => ({
         error: error instanceof Error ? error.message : 'Unknown error occurred',
         isLoading: false 
       });
+    }
+  },
+
+  getCartCount: async () => {
+    try {
+      const data = await apiCall<CartCountResponse>(
+        () => httpClient.get('/cart/count'),
+        'Failed to get cart count'
+      );
+      
+      if (data.success) {
+        return data.data.count;
+      } else {
+        throw new Error(data.message || 'Failed to get cart count');
+      }
+    } catch (error) {
+      console.error('Error getting cart count:', error);
+      return 0;
     }
   },
 

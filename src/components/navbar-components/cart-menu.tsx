@@ -16,24 +16,24 @@ export default function CartMenu() {
     cart, 
     isLoading, 
     error, 
-    removeFromCart, 
-    updateQuantity, 
+    removeFromCartByItemId, 
+    updateQuantityByItemId, 
     clearCart,
     clearError,
     getTotalItems,
     isEmpty
   } = useCart()
 
-  const handleQuantityChange = async (volumeId: string, newQuantity: number) => {
+  const handleQuantityChange = async (cartItemId: string, newQuantity: number) => {
     if (newQuantity < 1) {
-      await removeFromCart(volumeId)
+      await removeFromCartByItemId(cartItemId)
     } else {
-      await updateQuantity(volumeId, newQuantity)
+      await updateQuantityByItemId(cartItemId, newQuantity)
     }
   }
 
-  const handleRemoveItem = async (volumeId: string) => {
-    await removeFromCart(volumeId)
+  const handleRemoveItem = async (cartItemId: string) => {
+    await removeFromCartByItemId(cartItemId)
   }
 
   const handleClearCart = async () => {
@@ -133,7 +133,7 @@ export default function CartMenu() {
                           </p>
                         </div>
                         <button
-                          onClick={() => handleRemoveItem(item.volume.id)}
+                          onClick={() => handleRemoveItem(item.id)}
                           className="text-muted-foreground hover:text-destructive p-1"
                           disabled={isLoading}
                         >
@@ -157,7 +157,7 @@ export default function CartMenu() {
                         {/* Quantity Controls */}
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => handleQuantityChange(item.volume.id, item.quantity - 1)}
+                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                             className="h-6 w-6 rounded-full border border-border flex items-center justify-center hover:bg-accent"
                             disabled={isLoading}
                           >
@@ -167,7 +167,7 @@ export default function CartMenu() {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => handleQuantityChange(item.volume.id, item.quantity + 1)}
+                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                             className="h-6 w-6 rounded-full border border-border flex items-center justify-center hover:bg-accent"
                             disabled={isLoading || item.quantity >= item.volume.stock}
                           >

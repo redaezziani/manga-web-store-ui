@@ -118,6 +118,27 @@ export interface AddToCartRequest {
   quantity: number;
 }
 
+export interface UpdateCartItemRequest {
+  cartItemId: string;
+  quantity: number;
+}
+
+export interface CartCountResponse {
+  success: boolean;
+  message: string;
+  data: {
+    count: number;
+  };
+}
+
+export interface ClearCartResponse {
+  success: boolean;
+  message: string;
+  data: {
+    message: string;
+  };
+}
+
 export interface CartResponse {
   success: boolean;
   message: string;
@@ -138,8 +159,7 @@ export interface User {
 }
 
 export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
+  token: string;
   expiresIn: number;
 }
 
@@ -147,8 +167,7 @@ export interface AuthResponse {
   success: boolean;
   message: string;
   data: {
-    accessToken: string;
-    refreshToken: string;
+    token: string;
     expiresIn: number;
     user: User;
   };

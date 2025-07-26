@@ -15,7 +15,7 @@ export const useMangaVolumes = (mangaId: string) => {
 
     try {
       const response = await fetch(
-        `http://localhost:7000/api/v1/volumes?page=${page}&limit=${limit}&mangaId=${mangaId}`,
+        `http://192.168.100.108:7000/api/v1/volumes?page=${page}&limit=${limit}&mangaId=${mangaId}`,
         {
           headers: {
             'accept': 'application/json',

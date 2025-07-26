@@ -4,15 +4,13 @@ import { useUserStore } from './user-store';
 export const useAuth = () => {
   const {
     user,
-    accessToken,
-    refreshToken,
+    token,
     isLoading,
     error,
     isAuthenticated,
     login,
     register,
     logout,
-    refreshAccessToken,
     clearError,
     checkAuthStatus,
     updateProfile,
@@ -21,7 +19,7 @@ export const useAuth = () => {
   // Check auth status on mount - only once without automatic refresh
   useEffect(() => {
     // Only check if we have stored data but haven't verified authentication yet
-    if ((accessToken || user) && isAuthenticated === false) {
+    if ((token || user) && isAuthenticated === false) {
       checkAuthStatus();
     }
   }, []); // Empty dependency array to run only once on mount
@@ -40,9 +38,9 @@ export const useAuth = () => {
   const isActive = () => user?.status === 'ACTIVE';
 
   // Token helpers
-  const getAuthHeader = () => accessToken ? `Bearer ${accessToken}` : null;
+  const getAuthHeader = () => token ? `Bearer ${token}` : null;
   const isTokenExpired = () => {
-    if (!accessToken) return true;
+    if (!token) return true;
     // Add token expiry logic here if needed
     return false;
   };
@@ -53,14 +51,12 @@ export const useAuth = () => {
     isAuthenticated,
     isLoading,
     error,
-    accessToken,
-    refreshToken,
+    token,
     
     // Actions
     login,
     register,
     logout,
-    refreshAccessToken,
     clearError,
     updateProfile,
     

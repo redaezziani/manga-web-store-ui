@@ -10,11 +10,11 @@ interface RequestConfig {
 }
 
 class HttpClient {
-  private baseURL = 'http://localhost:7000/api/v1';
+  private baseURL = 'http://192.168.100.108:7000/api/v1';
 
   private async getAuthHeaders(): Promise<Record<string, string>> {
     const { getValidToken } = useUserStore.getState();
-    const token = await getValidToken();
+    const token = getValidToken();
     
     return {
       'Content-Type': 'application/json',

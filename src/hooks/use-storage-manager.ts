@@ -25,7 +25,7 @@ export const useStorageManager = () => {
    */
   const hasStoredUserData = useCallback(() => {
     const userData = storage.user.get(STORAGE_CONFIG.keys.user);
-    return userData && userData.user && userData.accessToken;
+    return userData && userData.user && userData.token;
   }, []);
 
   /**

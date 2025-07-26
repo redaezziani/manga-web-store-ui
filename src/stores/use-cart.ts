@@ -12,6 +12,7 @@ export const useCart = () => {
     updateQuantity,
     clearCart,
     fetchCart,
+    getCartCount,
     clearError
   } = useCartStore();
 
@@ -37,6 +38,24 @@ export const useCart = () => {
   const getItemQuantity = (volumeId: string) => 
     cart?.items.find(item => item.volume.id === volumeId)?.quantity || 0;
 
+  const getCartItemId = (volumeId: string) => 
+    cart?.items.find(item => item.volume.id === volumeId)?.id || null;
+
+  // Wrapper functions to work with volume IDs (for backward compatibility)
+  const removeFromCartByVolumeId = async (volumeId: string) => {
+    const cartItemId = getCartItemId(volumeId);
+    if (cartItemId) {
+      await removeFromCart(cartItemId);
+    }
+  };
+
+  const updateQuantityByVolumeId = async (volumeId: string, quantity: number) => {
+    const cartItemId = getCartItemId(volumeId);
+    if (cartItemId) {
+      await updateQuantity(cartItemId, quantity);
+    }
+  };
+
   const isEmpty = !cart || cart.items.length === 0;
 
   return {
@@ -48,10 +67,13 @@ export const useCart = () => {
     
     // Actions
     addToCart,
-    removeFromCart,
-    updateQuantity,
+    removeFromCart: removeFromCartByVolumeId, // For backward compatibility with volume IDs
+    updateQuantity: updateQuantityByVolumeId, // For backward compatibility with volume IDs
+    removeFromCartByItemId: removeFromCart, // Direct cart item ID access
+    updateQuantityByItemId: updateQuantity, // Direct cart item ID access
     clearCart,
     fetchCart,
+    getCartCount,
     clearError,
     
     // Helpers
@@ -62,5 +84,6 @@ export const useCart = () => {
     getTotalDiscount,
     isInCart,
     getItemQuantity,
+    getCartItemId,
   };
 };

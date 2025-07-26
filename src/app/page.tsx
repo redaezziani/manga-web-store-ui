@@ -26,7 +26,7 @@ export interface Volume {
 }
 // all text in the pages should be in Arabic
 export default async function Home() {
-  const res = await fetch("http://localhost:7000/api/v1/volumes?page=1&limit=10", {
+  const res = await fetch("http://192.168.100.108:7000/api/v1/volumes?page=1&limit=10", {
     next: { revalidate: 60 },
   });
   if (!res.ok) {
