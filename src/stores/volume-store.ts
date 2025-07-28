@@ -18,7 +18,7 @@ export const useVolumeStore = create<VolumeStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch(`http://192.168.100.108:7000/api/v1/volumes/${volumeId}`);
+      const response = await fetch(`http://localhost:7000/api/v1/volumes/${volumeId}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

@@ -49,7 +49,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
 
     const handelRelatedVolumes = async (volumeId: string) => {
         try {
-            const res = await fetch(`http://192.168.100.108:7000/api/v1/volumes/${volumeId}/related?limit=6`);
+            const res = await fetch(`http://localhost:7000/api/v1/volumes/${volumeId}/related?limit=6`);
             if (!res.ok) {
                 throw new Error('Failed to fetch related volumes');
             }
