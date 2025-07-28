@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
 import { useFilters } from "@/stores/use-filters";
+import VolumeCard from "../ui/volume-card";
 
 const statusList = ["مستمرة", "مكتملة"];
 const typesList = ["مانجا", "مانهوا", "ويب تون"];
@@ -176,18 +177,15 @@ export default function FilterPage() {
             </Button>
           </section>
 
-          <div className="col-span-3 border rounded-xl p-6 min-h-[40vh] flex items-center justify-center text-muted-foreground">
+          <div className="col-span-3  p-6 min-h-[40vh] flex items-center justify-center text-muted-foreground">
             {isLoading ? (
               <div className="text-center">...جاري التحميل</div>
             ) : (
-              
-               
-                  <h1 className="text-center text-lg font-semibold">
-                    {volumes.length} مانجا متاحة وفقًا للمعايير المحددة
-                  </h1>
-              
-              
-             
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6">
+                {volumes.map((volume) => (
+                  <VolumeCard key={volume.id} data={volume} />
+                ))}
+              </div>
             )}
           </div>
         </div>
