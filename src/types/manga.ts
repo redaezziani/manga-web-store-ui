@@ -278,3 +278,40 @@ export interface AddToWishlistRequest {
 export interface RemoveFromWishlistRequest {
   mangaId: string;
 }
+
+// Filter and Volume query types
+export interface FilterData {
+  authors: string[];
+  categories: Category[];
+  priceRange: {
+    min: number;
+    max: number;
+  };
+}
+
+export interface FilterDataResponse {
+  success: boolean;
+  message: string;
+  data: FilterData;
+}
+
+export interface VolumeQueryParams {
+  page?: number;
+  limit?: number;
+  mangaId?: string;
+  isAvailable?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+  authors?: string[];
+  categories?: string[];
+}
+
+export interface VolumeFiltersResponse {
+  success: boolean;
+  message: string;
+  data: {
+    data: VolumeListItem[];
+    meta: Meta;
+  };
+}

@@ -5,31 +5,44 @@ import { RotateCcw, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useFilters } from "@/stores/use-filters";
 
-const genresList = ["أكشن", "دراما", "رعب", "رومانسي"];
 const statusList = ["مستمرة", "مكتملة"];
 const typesList = ["مانجا", "مانهوا", "ويب تون"];
 
 export default function FilterPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const {
+    currentFilters,
+    filterData,
+    volumes,
+    isLoading,
+    resetFilters,
+    setPriceRange,
+    toggleAvailability,
+    toggleInStock,
+    updateFilters,
+  } = useFilters();
 
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState(currentFilters.search || "");
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(currentFilters.categories || []);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-
-  const updateFiltersInURL = () => {
-    const params = new URLSearchParams();
-
-    if (searchQuery) params.set("search", searchQuery);
-    if (selectedGenres.length) params.set("genres", selectedGenres.join(","));
-    if (selectedStatuses.length) params.set("statuses", selectedStatuses.join(","));
-    if (selectedTypes.length) params.set("types", selectedTypes.join(","));
-
-    router.push(`/catalog?${params.toString()}`);
+  const [isAvailable, setIsAvailable] = useState(currentFilters.isAvailable);
+  const [inStock, setInStock] = useState(currentFilters.inStock);
+  const [minPrice, setMinPrice] = useState(currentFilters.minPrice || 10);
+  const [maxPrice, setMaxPrice] = useState(currentFilters.maxPrice || 3000);
+  const [selectedAuthor, setSelectedAuthor] = useState<string[]>([]);
+  
+  const applyFilters = () => {
+    updateFilters({
+      search: searchQuery,
+      categories: selectedGenres,
+      isAvailable,
+      inStock,
+      minPrice,
+      maxPrice,
+    });
   };
 
   const toggleValue = (value: string, list: string[], setList: (v: string[]) => void) => {
@@ -40,30 +53,32 @@ export default function FilterPage() {
     }
   };
 
-  const resetFilters = () => {
+  const resetAll = () => {
     setSearchQuery("");
     setSelectedGenres([]);
     setSelectedStatuses([]);
     setSelectedTypes([]);
-    router.push("/catalog");
+    setIsAvailable(true);
+    setInStock(true);
+    setMinPrice(10);
+    setMaxPrice(3000);
+    resetFilters();
   };
 
   return (
     <MainPageLayout>
       <div className="flex w-full container mx-auto mt-10 flex-col min-h-[80vh] gap-6">
         <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-4">
-          {/* Sidebar Filters */}
           <section className="col-span-1 flex flex-col gap-6 text-gray-600">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">تصفية المانجا</h2>
-              {(selectedGenres.length || selectedStatuses.length || selectedTypes.length || searchQuery) && (
-                <Button variant="ghost" size="icon" onClick={resetFilters}>
+              {(selectedGenres.length || searchQuery) && (
+                <Button variant="ghost" size="icon" onClick={resetAll}>
                   <RotateCcw size={16} />
                 </Button>
               )}
             </div>
 
-            {/* Search */}
             <div className="relative">
               <span className="absolute inset-y-0 start-0 ps-3 flex items-center text-muted-foreground/80">
                 <Search size={16} />
@@ -85,66 +100,95 @@ export default function FilterPage() {
               )}
             </div>
 
-            {/* Genres */}
             <div>
               <h4 className="font-semibold mb-2">النوع</h4>
               <div className="flex flex-wrap gap-2">
-                {genresList.map((genre) => (
-                  <label key={genre} className="flex items-center gap-2">
+                {filterData?.categories.map((genre) => (
+                  <label key={genre.id} className="flex items-center gap-2">
                     <Checkbox
-                      checked={selectedGenres.includes(genre)}
-                      onCheckedChange={() => toggleValue(genre, selectedGenres, setSelectedGenres)}
-                      id={`genre-${genre}`}
+                      checked={selectedGenres.includes(genre.id)}
+                      onCheckedChange={() => toggleValue(genre.id, selectedGenres, setSelectedGenres)}
                     />
-                    <span className="text-sm">{genre}</span>
+                    <span className="text-sm">{genre.nameAr}</span>
                   </label>
                 ))}
               </div>
             </div>
 
-            {/* Status */}
             <div>
-              <h4 className="font-semibold mb-2">الحالة</h4>
+              <h4 className="font-semibold mb-2">
+                المؤلفون
+              </h4>
               <div className="flex flex-wrap gap-2">
-                {statusList.map((status) => (
-                  <label key={status} className="flex items-center gap-2">
+                {filterData?.authors.map((author) => (
+                  <label key={author} className="flex items-center gap-2">
                     <Checkbox
-                      checked={selectedStatuses.includes(status)}
-                      onCheckedChange={() => toggleValue(status, selectedStatuses, setSelectedStatuses)}
-                      id={`status-${status}`}
+                      checked={selectedAuthor.includes(author)}
+                      onCheckedChange={() => toggleValue(author, selectedAuthor, setSelectedAuthor)}
                     />
-                    <span className="text-sm">{status}</span>
+                    <span className="text-sm">{author}</span>
                   </label>
                 ))}
               </div>
             </div>
 
-            {/* Types */}
+            <div className="w-full flex justify-between flex-wrap gap-2">
+              <div>
+                <h4 className="font-semibold mb-2">متاح</h4>
+                <label className="flex items-center gap-2">
+                  <Checkbox checked={isAvailable} onCheckedChange={() => setIsAvailable(!isAvailable)} />
+                  <span className="text-sm">عرض المانجا المتاحة فقط</span>
+                </label>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">في المخزون</h4>
+                <label className="flex items-center gap-2">
+                  <Checkbox checked={inStock} onCheckedChange={() => setInStock(!inStock)} />
+                  <span className="text-sm">عرض المتوفر فقط</span>
+                </label>
+              </div>
+            </div>
+
             <div>
-              <h4 className="font-semibold mb-2">نوع النشر</h4>
-              <div className="flex flex-wrap gap-2">
-                {typesList.map((type) => (
-                  <label key={type} className="flex items-center gap-2">
-                    <Checkbox
-                      checked={selectedTypes.includes(type)}
-                      onCheckedChange={() => toggleValue(type, selectedTypes, setSelectedTypes)}
-                      id={`type-${type}`}
-                    />
-                    <span className="text-sm">{type}</span>
-                  </label>
-                ))}
+              <h4 className="font-semibold mb-2">نطاق السعر</h4>
+              <div className="flex gap-2 items-center">
+                <Input
+                  type="number"
+                  min={0}
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(Number(e.target.value))}
+                  className="w-1/2"
+                  placeholder="أدنى سعر"
+                />
+                <Input
+                  type="number"
+                  min={0}
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
+                  className="w-1/2"
+                  placeholder="أقصى سعر"
+                />
               </div>
             </div>
 
-            {/* Apply Button */}
-            <Button className="w-full mt-4" onClick={updateFiltersInURL}>
-              تطبيق الفلاتر
+            <Button className="w-full mt-4" onClick={applyFilters} disabled={isLoading}>
+              {isLoading ? "...جاري التحميل" : "تطبيق الفلاتر"}
             </Button>
           </section>
 
-          {/* Manga Results Placeholder */}
           <div className="col-span-3 border rounded-xl p-6 min-h-[40vh] flex items-center justify-center text-muted-foreground">
-            النتائج ستظهر هنا...
+            {isLoading ? (
+              <div className="text-center">...جاري التحميل</div>
+            ) : (
+              
+               
+                  <h1 className="text-center text-lg font-semibold">
+                    {volumes.length} مانجا متاحة وفقًا للمعايير المحددة
+                  </h1>
+              
+              
+             
+            )}
           </div>
         </div>
       </div>

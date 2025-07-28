@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { VolumeData, VolumeRoot } from '@/types/manga';
+import { httpClient, apiCall } from '@/lib/http-client';
 
 interface VolumeStore {
   volume: VolumeData | null;
@@ -18,13 +19,10 @@ export const useVolumeStore = create<VolumeStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const response = await fetch(`http://localhost:7000/api/v1/volumes/${volumeId}`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: VolumeRoot = await response.json();
+      const data = await apiCall<VolumeRoot>(
+        () => httpClient.get(`/volumes/${volumeId}`, false), // Public endpoint
+        'Failed to fetch volume'
+      );
       
       if (data.success) {
         set({ volume: data.data, isLoading: false });
