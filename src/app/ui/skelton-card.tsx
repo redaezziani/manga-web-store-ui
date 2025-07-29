@@ -17,7 +17,6 @@ const SkeletonCard = () => {
             </div>
             <div className="flex items-center justify-between p-3">
                 <div className="flex flex-wrap gap-1">
-                    <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-12"></div>
                     <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
                 </div>
                 <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-10"></div>
