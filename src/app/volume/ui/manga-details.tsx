@@ -13,6 +13,7 @@ import WishlistButton from '@/components/wishlist/wishlist-button';
 import Link from "next/link";
 import { formatCurrencyAr } from "@/lib/currency";
 import { Card } from "@/components/ui/card";
+import { BookOpen, Instagram, Mail, Twitter } from "lucide-react";
 // import MangaDetailsSkeleton from './MangaSkeleton';
 
 interface MangaDetailsProps {
@@ -229,7 +230,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                             currentVolumeId={volume.id}
                         />
                         {relatedVolumes.length > 0 && (
-                            
+
                             <div className="">
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-xl font-bold">المجلدات المشابهة </h2>
@@ -241,7 +242,9 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
 
                                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                                     {relatedVolumes.map((relatedVolume) => (
-                                        <div className={`group relative `}>
+                                        <div
+                                        key={relatedVolume.id}
+                                        className={`group relative `}>
                                             <Link href={`/volume/${relatedVolume.id}`} className="block">
                                                 <Card className="group bg-transparent dark:bg-transparent overflow-hidden border-none shadow-none">
                                                     <div className="relative aspect-[10/14] w-full overflow-hidden rounded-lg">
@@ -309,6 +312,69 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                                 </div>
                             </div>
                         )}
+
+                        <footer className="mt-20 border-t border-border pt-10 pb-6 px-4 md:px-0 text-center text-muted-foreground text-sm">
+                            <div className="max-w-4xl mx-auto space-y-5">
+                                {/* Mission / Tagline */}
+                                <div>
+                                    <p className="text-lg font-semibold text-foreground">
+                                        مكتبة المانجا — حيث تبدأ مغامرتك!
+                                    </p>
+                                    <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+                                        نقدم لك أفضل المانجا مترجمة للعربية مع تجربة تسوق سلسة وآمنة، تناسب جميع الأذواق من الأكشن إلى الرومانسية.
+                                    </p>
+                                </div>
+
+                                {/* Navigation Links */}
+                                <div className="flex justify-center gap-4 flex-wrap text-sm">
+                                    <Link href="/about" className="hover:underline">من نحن</Link>
+                                    <Link href="/privacy" className="hover:underline">سياسة الخصوصية</Link>
+                                    <Link href="/terms" className="hover:underline">شروط الاستخدام</Link>
+                                    <Link href="/contact" className="hover:underline">اتصل بنا</Link>
+                                </div>
+
+                                {/* Social Icons */}
+                                <div className="flex justify-center gap-5 text-muted-foreground">
+                                    <Link
+                                        href="https://www.instagram.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Instagram"
+                                        className="hover:text-foreground transition-colors"
+                                    >
+                                        <Instagram className="w-5 h-5" />
+                                    </Link>
+                                    <Link
+                                        href="https://twitter.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Twitter"
+                                        className="hover:text-foreground transition-colors"
+                                    >
+                                        <Twitter className="w-5 h-5" />
+                                    </Link>
+                                    <Link
+                                        href="mailto:support@manga-store.com"
+                                        className="hover:text-foreground transition-colors"
+                                        aria-label="Email"
+                                    >
+                                        <Mail className="w-5 h-5" />
+                                    </Link>
+                                    <Link
+                                        href="/catalog"
+                                        className="hover:text-foreground transition-colors"
+                                        aria-label="Catalog"
+                                    >
+                                        <BookOpen className="w-5 h-5" />
+                                    </Link>
+                                </div>
+
+                                {/* Copyright */}
+                                <p className="text-xs text-muted-foreground pt-4">
+                                    © {new Date().getFullYear()} جميع الحقوق محفوظة لمكتبة المانجا
+                                </p>
+                            </div>
+                        </footer>
 
                     </div>
                 </div>

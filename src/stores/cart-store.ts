@@ -38,6 +38,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
+
       const data = await apiCall<CartResponse>(
         () => httpClient.get('/cart'),
         'Failed to fetch cart'
