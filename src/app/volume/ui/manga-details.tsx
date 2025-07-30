@@ -6,12 +6,13 @@ import { ar } from 'date-fns/locale';
 import { Badge } from "@/components/ui/badge";
 import { useVolume } from '@/stores/use-volume';
 import { useCart } from '@/stores/use-cart';
-import { formatCurrencyAr } from '@/lib/currency';
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import MangaVolumesList from '@/components/manga/manga-volumes-list';
-import VolumeList from "@/app/ui/volumes-list";
 import WishlistButton from '@/components/wishlist/wishlist-button';
+import Link from "next/link";
+import { formatCurrencyAr } from "@/lib/currency";
+import { Card } from "@/components/ui/card";
 // import MangaDetailsSkeleton from './MangaSkeleton';
 
 interface MangaDetailsProps {
@@ -68,8 +69,8 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
 
     const handleAddToCart = async () => {
         // made a fake delay to simulate network request using promise
-       
-        
+
+
         if (volume) {
             await addToCart({
                 volumeId: volume.id,
@@ -104,7 +105,7 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
         <div className="space-y-10">
             <div className="mt-4 flex w-full flex-col items-start justify-start gap-4 md:gap-10 overflow-x-hidden md:flex-row">
                 {/* Volume Cover */}
-                <div className="relative aspect-[2/3] w-full max-w-60 overflow-hidden rounded-lg border border-gray-400/45">
+                <div className="relative aspect-[2/3] min-w-60 overflow-hidden rounded-lg border border-gray-400/45">
                     <Image
                         placeholder='blur'
                         layout="fill"
@@ -227,19 +228,88 @@ export default function MangaDetails({ volumeId }: MangaDetailsProps) {
                             mangaId={manga.id}
                             currentVolumeId={volume.id}
                         />
-                        <VolumeList
-                            title="المجلدات ذات الصلة"
-                            mangas={relatedVolumes}
-                            isLoading={isLoading}
-                            skeletonCount={5}
-                            breakpoints={{
-                                320: { slidesPerView: 2, spaceBetween: 10 },
-                                480: { slidesPerView: 2, spaceBetween: 15 },
-                                768: { slidesPerView: 2, spaceBetween: 15 },
-                                1024: { slidesPerView: 3, spaceBetween: 15 },
-                                1280: { slidesPerView: 6, spaceBetween: 15 },
-                            }}
-                        />
+                        {relatedVolumes.length > 0 && (
+                            
+                            <div className="">
+                                <div className="flex items-center justify-between">
+                                    <h2 className="text-xl font-bold">المجلدات المشابهة </h2>
+
+                                    <span className="text-sm text-muted-foreground">
+                                        {relatedVolumes.length} مجلدات
+                                    </span>
+                                </div>
+
+                                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                                    {relatedVolumes.map((relatedVolume) => (
+                                        <div className={`group relative `}>
+                                            <Link href={`/volume/${relatedVolume.id}`} className="block">
+                                                <Card className="group bg-transparent dark:bg-transparent overflow-hidden border-none shadow-none">
+                                                    <div className="relative aspect-[10/14] w-full overflow-hidden rounded-lg">
+                                                        <Image
+                                                            src={relatedVolume.coverImage || relatedVolume.manga.coverImage}
+                                                            alt={`${relatedVolume.manga.title} - المجلد ${relatedVolume.volumeNumber}`}
+                                                            style={{ objectFit: "cover" }}
+                                                            loading='lazy'
+                                                            placeholder='blur'
+                                                            blurDataURL={relatedVolume.coverImage || relatedVolume.manga.coverImage}
+                                                            quality={100}
+                                                            layout="fill"
+                                                        />
+
+
+
+                                                        {/* Add to cart button overlay */}
+                                                        {relatedVolume.isAvailable && relatedVolume.stock > 0 && (
+                                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                                                <Button
+                                                                    onClick={handleAddToCart}
+                                                                    disabled={cartLoading}
+                                                                    size="sm"
+                                                                    className="transform scale-90 group-hover:scale-100 transition-transform"
+                                                                >
+                                                                    {cartLoading ? (
+                                                                        <>
+                                                                            <svg className="mr-3  size-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+
+                                                                            إضافة للسلة...
+                                                                        </>
+                                                                    ) : (
+                                                                        'إضافة للسلة'
+                                                                    )}
+                                                                </Button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="w-full">
+                                                        <h3 className="line-clamp-1 text-md font-medium">
+                                                            المجلد {relatedVolume.volumeNumber}
+                                                        </h3>
+                                                        <div className="flex items-center gap-2">
+                                                            {relatedVolume.discount > 0 ? (
+                                                                <>
+                                                                    <span className="text-xs  text-gray-900">
+                                                                        {formatCurrencyAr(relatedVolume.finalPrice)}
+                                                                    </span>
+                                                                    <span className="text-xs  text-gray-900">
+                                                                        {formatCurrencyAr(relatedVolume.price)}
+                                                                    </span>
+                                                                </>
+                                                            ) : (
+                                                                <span className="text-xs text-gray-500 line-through">
+                                                                    {formatCurrencyAr(relatedVolume.price)}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                            </Link>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                     </div>
                 </div>
             </div>
