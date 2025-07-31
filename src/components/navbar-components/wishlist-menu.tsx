@@ -110,7 +110,7 @@ export default function WishlistMenu() {
                       <div className="flex items-start gap-3">
                         <div className="relative w-12 h-16 rounded-md overflow-hidden border flex-shrink-0">
                           <Image
-                            src={item.coverImage}
+                            src={item.manga.coverImage}
                             alt={item.manga.title}
                             layout="fill"
                             className="object-cover"

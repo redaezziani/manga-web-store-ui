@@ -234,7 +234,6 @@ export interface WishlistItem {
   id: string;
   createdAt: string;
   manga: WishlistManga;
-  
 }
 
 export interface WishlistManga {

@@ -39,6 +39,8 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
         () => httpClient.get('/wishlist'),
         'Failed to fetch wishlist'
       );
+
+      console.log('Fetched wishlist:', data);
       
       if (data.success) {
         set({ 
