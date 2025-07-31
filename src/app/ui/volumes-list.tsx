@@ -58,6 +58,7 @@ const VolumeList = ({
     1280: { slidesPerView: 9, spaceBetween: 20 },
   }
 }: VolumeListProps) => {
+
   const id = useId().replace(/:/g, '');
   const prevButtonClass = `prev-button-${id}`;
   const nextButtonClass = `next-button-${id}`;
@@ -84,7 +85,7 @@ const VolumeList = ({
     <div lang="ar" className="container relative mx-auto flex-col space-y-1 ">
       {title && <h3 className="text-xl font-bold ">{title}</h3>}
       <div className="flex w-full items-end justify-between pb-2">
-        <Link href={'/app/all'} lang="ar" className="text-sm text-gray-500">
+        <Link href={'/catalog'} lang="ar" className="text-sm text-gray-500">
           عرض الكل
         </Link>
         <div className="flex gap-4">
